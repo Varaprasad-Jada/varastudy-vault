@@ -9,6 +9,7 @@ VaraStudy Vault is an independent classic WordPress theme for organizing college
 - Semester and subject-based resource navigation
 - Primary and footer menu locations
 - Responsive layout and keyboard-visible focus styles
+- Support for displaying resources using WordPress custom post types and Advanced Custom Fields (ACF)
 
 ## Requirements
 
@@ -28,7 +29,7 @@ The `subject` relationship/post-object field must return a value format supporte
 ## Installation
 
 1. Back up your site and test the theme on a development or staging site first.
-2. In WordPress, open **Appearance → Themes → Add New → Upload Theme** and upload `varastudy-vault-github-ready.zip` (or install the theme folder from this repository).
+2. In WordPress, open **Appearance → Themes → Add New → Upload Theme** and upload the theme ZIP from the project's Releases section, or install the theme folder from this repository.
 3. Activate **VaraStudy Vault**.
 4. Keep the required custom post type and ACF configurations enabled.
 5. Open **Settings → Permalinks** and click **Save Changes** once.
@@ -40,10 +41,18 @@ The `subject` relationship/post-object field must return a value format supporte
 - Theme stylesheet: `style.css`
 - Theme setup and resource helpers: `functions.php`
 - Navigation script: `assets/js/navigation.js`
-- CSS classes retain the `cv-` prefix for internal consistency; the visible theme name and text domain are VaraStudy Vault / `varastudy-vault`.
+- CSS classes retain the `cv-` prefix for internal consistency.
+- Theme name: VaraStudy Vault
+- Text domain: `varastudy-vault`
 
 This is an initial release and has not been verified against every WordPress, CPT UI, or ACF configuration. Test archive filters, relationship fields, menus, and resource links before using it on a production site.
 
+## Images and branding
+
+The theme does not bundle stock photography or user-specific branding images. Site owners can configure their own site icon, logo, images, and study-resource content using WordPress and the theme's supported features. Users are responsible for ensuring they have permission to use the content they upload.
+
 ## License
 
-No license file is included yet. Choose and add a license before presenting this repository as an open-source release.
+VaraStudy Vault is distributed under the **GNU General Public License, version 2 or later (GPL-2.0-or-later)**.
+
+See the [`LICENSE`](LICENSE) file for the complete license text.
