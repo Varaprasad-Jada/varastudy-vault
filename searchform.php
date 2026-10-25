@@ -1,0 +1,1 @@
+<form role="search" method="get" class="cv-search" action="<?php echo esc_url(home_url('/'));?>"><label class="screen-reader-text" for="cv-search">Search VaraStudy Vault</label><input id="cv-search" type="search" name="s" value="<?php echo esc_attr(get_search_query());?>" placeholder="Search study resources…"><button type="submit">Search</button></form>

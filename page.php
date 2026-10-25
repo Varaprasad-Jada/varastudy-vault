@@ -1,0 +1,1 @@
+<?php get_header();?><main id="main-content" class="cv-page"><div class="cv-container"><?php get_template_part('template-parts/breadcrumbs');?><?php while(have_posts()):the_post();?><h1 class="cv-title"><?php the_title();?></h1><div class="cv-content"><?php the_content();?></div><?php endwhile;?></div></main><?php get_footer();?>
