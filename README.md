@@ -51,6 +51,16 @@ This is an initial release and has not been verified against every WordPress, CP
 
 The theme does not bundle stock photography or user-specific branding images. Site owners can configure their own site icon, logo, images, and study-resource content using WordPress and the theme's supported features. Users are responsible for ensuring they have permission to use the content they upload.
 
+
+## Screenshots
+
+### Homepage
+![VaraStudy Vault homepage](screenshots/homepage.png)
+
+### Study Materials
+![Study Materials archive with resource filters](screenshots/study-materials.png)
+
+
 ## License
 
 VaraStudy Vault is distributed under the **GNU General Public License, version 2 or later (GPL-2.0-or-later)**.
