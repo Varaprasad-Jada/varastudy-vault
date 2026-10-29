@@ -168,10 +168,18 @@ $unit = function_exists( 'get_field' )
         ?>
 
         <p class="cv-eyebrow">
-            <?php echo esc_html( $category_labels[ $category ] ?? 'Study Resource' ); ?>
-        </p>
+    <?php echo esc_html( $category_labels[ $category ] ?? 'Study Resource' ); ?>
+</p>
 
-        <h3>
+<?php if ( $subject_title ) : ?>
+    <p class="cv-resource-subject">
+        <a href="<?php echo esc_url( $subject_url ); ?>">
+            <?php echo esc_html( $subject_title ); ?>
+        </a>
+    </p>
+<?php endif; ?>
+
+<h3>
             <a href="<?php the_permalink(); ?>">
                 <?php the_title(); ?>
             </a>
