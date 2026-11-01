@@ -227,7 +227,7 @@ if ( ! defined( 'ABSPATH' ) ) {
                 array(
                     'theme_location' => 'primary',
                     'container'      => false,
-                    'fallback_cb'    => 'varastudy-vaultault_menu_fallback',
+                    'fallback_cb'    => 'varastudyvault_menu_fallback',
                     'items_wrap'     => '<ul>%3$s</ul>',
                     'depth'          => 2,
                 )
@@ -282,7 +282,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 <script>
 (function () {
-    function initializevarastudy-vaultSearch() {
+    function initializevarastudyvaultSearch() {
         document.querySelectorAll('.cv-header .cv-search-wrap').forEach(function (wrap) {
             if (wrap.dataset.searchInitialized === 'true') {
                 return;
@@ -354,9 +354,9 @@ if ( ! defined( 'ABSPATH' ) ) {
     }
 
     if (document.readyState === 'loading') {
-        document.addEventListener('DOMContentLoaded', initializevarastudy-vaultSearch);
+        document.addEventListener('DOMContentLoaded', initializevarastudyvaultSearch);
     } else {
-        initializevarastudy-vaultSearch();
+        initializevarastudyvaultSearch();
     }
 })();
 </script>

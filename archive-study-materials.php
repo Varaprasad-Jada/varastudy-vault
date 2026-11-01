@@ -1,3 +1,4 @@
+
 <?php
 if (!defined('ABSPATH')) {
     exit;
@@ -5,6 +6,9 @@ if (!defined('ABSPATH')) {
 
 get_header();
 
+/*
+ * Selected filters.
+ */
 $selected_group = isset($_GET['course_group'])
     ? sanitize_title(wp_unslash($_GET['course_group']))
     : '';
@@ -13,14 +17,40 @@ $selected_semester = isset($_GET['semester'])
     ? sanitize_text_field(wp_unslash($_GET['semester']))
     : '';
 
+$selected_subject = isset($_GET['subject'])
+    ? absint($_GET['subject'])
+    : 0;
+
 $selected_category = isset($_GET['resource_category'])
     ? sanitize_key(wp_unslash($_GET['resource_category']))
     : '';
 
+/*
+ * Course Groups.
+ */
 $course_groups = get_terms(array(
     'taxonomy'   => 'course_group',
     'hide_empty' => false,
 ));
+
+/*
+ * Subjects matching the selected Course Group and Semester.
+ */
+$subject_ids = varastudyvault_get_filtered_subject_ids(
+    $selected_group,
+    $selected_semester
+);
+
+$subjects = !empty($subject_ids)
+    ? get_posts(array(
+        'post_type'      => 'subjects',
+        'post_status'    => 'publish',
+        'posts_per_page' => -1,
+        'post__in'       => $subject_ids,
+        'orderby'        => 'title',
+        'order'          => 'ASC',
+    ))
+    : array();
 
 $archive_url = get_post_type_archive_link('study-materials');
 ?>
@@ -28,7 +58,7 @@ $archive_url = get_post_type_archive_link('study-materials');
 <style>
 .cv-resource-filters {
     display: grid;
-    grid-template-columns: repeat(3, minmax(0, 1fr));
+    grid-template-columns: repeat(4, minmax(0, 1fr));
     gap: 18px;
     align-items: end;
     margin: 28px 0 32px;
@@ -147,7 +177,9 @@ $archive_url = get_post_type_archive_link('study-materials');
         <?php get_template_part('template-parts/breadcrumbs'); ?>
 
         <p class="cv-eyebrow">Learn by topic</p>
+
         <h1 class="cv-title">Study Materials</h1>
+
         <p class="cv-intro">
             Browse notes, lessons, lab resources and skill-paper materials.
         </p>
@@ -157,8 +189,11 @@ $archive_url = get_post_type_archive_link('study-materials');
             method="get"
             action="<?php echo esc_url($archive_url); ?>"
         >
+
+            <!-- Course Group -->
             <div class="cv-filter-field">
                 <label for="cv-course-group">Course Group</label>
+
                 <select id="cv-course-group" name="course_group">
                     <option value="">All course groups</option>
 
@@ -179,8 +214,10 @@ $archive_url = get_post_type_archive_link('study-materials');
                 </select>
             </div>
 
+            <!-- Semester -->
             <div class="cv-filter-field">
                 <label for="cv-semester">Semester</label>
+
                 <select id="cv-semester" name="semester">
                     <option value="">All semesters</option>
 
@@ -195,25 +232,48 @@ $archive_url = get_post_type_archive_link('study-materials');
                 </select>
             </div>
 
+            <!-- Subject -->
+            <div class="cv-filter-field">
+                <label for="cv-subject">Subject</label>
+
+                <select id="cv-subject" name="subject">
+                    <option value="">All Subjects</option>
+
+                    <?php foreach ($subjects as $subject) : ?>
+                        <option
+                            value="<?php echo esc_attr((string) $subject->ID); ?>"
+                            <?php selected($selected_subject, $subject->ID); ?>
+                        >
+                            <?php echo esc_html($subject->post_title); ?>
+                        </option>
+                    <?php endforeach; ?>
+                </select>
+            </div>
+
+            <!-- Resource Category -->
             <div class="cv-filter-field">
                 <label for="cv-resource-category">Resource Category</label>
+
                 <select
                     id="cv-resource-category"
                     name="resource_category"
                 >
                     <option value="">All Categories</option>
+
                     <option
                         value="theory"
                         <?php selected($selected_category, 'theory'); ?>
                     >
                         Theory
                     </option>
+
                     <option
                         value="lab"
                         <?php selected($selected_category, 'lab'); ?>
                     >
                         Lab
                     </option>
+
                     <option
                         value="skill"
                         <?php selected($selected_category, 'skill'); ?>
@@ -223,6 +283,7 @@ $archive_url = get_post_type_archive_link('study-materials');
                 </select>
             </div>
 
+            <!-- Filter Actions -->
             <div class="cv-filter-actions">
                 <button class="cv-filter-button" type="submit">
                     Apply Filters
@@ -235,15 +296,19 @@ $archive_url = get_post_type_archive_link('study-materials');
                     Clear Filters
                 </a>
             </div>
+
         </form>
 
+        <!-- Study Materials -->
         <?php if (have_posts()) : ?>
 
             <div class="cv-grid">
                 <?php
                 while (have_posts()) :
                     the_post();
+
                     get_template_part('template-parts/resource-card');
+
                 endwhile;
                 ?>
             </div>

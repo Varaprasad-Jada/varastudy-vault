@@ -17,8 +17,8 @@ get_header();
             <?php
             $post_id = get_the_ID();
 
-            $subject_id = varastudy_vault_subject_id( $post_id );
-            $meta       = varastudy_vault_resource_meta( $post_id );
+            $subject_id = varastudyvault_subject_id( $post_id );
+            $meta       = varastudyvault_resource_meta( $post_id );
 
             $file = function_exists( 'get_field' )
                 ? get_field( 'pdf_file', $post_id )

@@ -7,8 +7,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 $post_id   = get_the_ID();
 $post_type = get_post_type( $post_id );
 
-$meta = function_exists( 'varastudy_vault_resource_meta' )
-    ? varastudy_vault_resource_meta( $post_id )
+$meta = function_exists( 'varastudyvault_resource_meta' )
+    ? varastudyvault_resource_meta( $post_id )
     : array();
 
 $normalize = static function ( $value ) {
@@ -56,8 +56,8 @@ $display = static function ( $value ) use ( $normalize, $labels ) {
 /*
  * Get the linked Subject.
  */
-$subject_id = function_exists( 'varastudy_vault_subject_id' )
-    ? varastudy_vault_subject_id( $post_id )
+$subject_id = function_exists( 'varastudyvault_subject_id' )
+    ? varastudyvault_subject_id( $post_id )
     : 0;
 
 $subject_title = $subject_id ? get_the_title( $subject_id ) : '';

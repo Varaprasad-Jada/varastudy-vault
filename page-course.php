@@ -1,7 +1,7 @@
 <?php
 /**
- * Template Name: VaraStudy Vault Course Page
- * Description: Reusable landing page for VaraStudy Vault course groups.
+ * Template Name: varastudyvault Course Page
+ * Description: Reusable landing page for all varastudyvault course groups.
  */
 
 get_header();
@@ -24,6 +24,10 @@ $papers_archive = get_post_type_archive_link('question-papers');
 ?>
 
 <main id="main-content" class="cv-course-page">
+
+    <div class="cv-container">
+        <?php get_template_part('template-parts/breadcrumbs'); ?>
+    </div>
 
     <!-- HERO -->
     <section class="cv-hero">
@@ -85,6 +89,7 @@ $papers_archive = get_post_type_archive_link('question-papers');
 
     <?php endif; ?>
 </div>
+        </div>
     </section>
 
     <!-- SEMESTERS -->
@@ -134,15 +139,9 @@ $papers_archive = get_post_type_archive_link('question-papers');
                     $subject_ids = get_posts($subject_args);
                     $subject_count = count($subject_ids);
 
-                    $semester_url = $subjects_archive
-                        ? add_query_arg(
-                            array(
-                                'course_group' => $course_slug,
-                                'semester'     => $semester,
-                            ),
-                            $subjects_archive
-                        )
-                        : home_url('/');
+                    $semester_url = home_url(
+    '/' . $course_slug . '/semester' . $semester . '/'
+);
                     ?>
 
                     <a

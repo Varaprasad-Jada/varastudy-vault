@@ -17,16 +17,16 @@ get_header();
             <?php
             $post_id = get_the_ID();
 
-            $subject_id = function_exists( 'varastudy_vault_subject_id' )
-                ? varastudy_vault_subject_id( $post_id )
+            $subject_id = function_exists( 'varastudyvault_subject_id' )
+                ? varastudyvault_subject_id( $post_id )
                 : 0;
 
             $file = function_exists( 'get_field' )
                 ? get_field( 'question_paper_pdf', $post_id )
                 : false;
 
-            $meta = function_exists( 'varastudy_vault_resource_meta' )
-                ? varastudy_vault_resource_meta( $post_id )
+            $meta = function_exists( 'varastudyvault_resource_meta' )
+                ? varastudyvault_resource_meta( $post_id )
                 : array();
 
             /*

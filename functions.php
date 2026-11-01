@@ -7,7 +7,7 @@ if (!defined('ABSPATH')) {
 /**
  * Theme setup.
  */
-function varastudy_vault_setup() {
+function varastudyvault_setup() {
     add_theme_support('title-tag');
     add_theme_support('post-thumbnails');
 
@@ -28,39 +28,82 @@ function varastudy_vault_setup() {
     ));
 
     register_nav_menus(array(
-        'primary' => __('Primary Navigation', 'varastudy-vault'),
-        'footer'  => __('Footer Navigation', 'varastudy-vault'),
+        'primary' => __('Primary Navigation', 'varastudyvault'),
+        'footer'  => __('Footer Navigation', 'varastudyvault'),
     ));
 }
-add_action('after_setup_theme', 'varastudy_vault_setup');
+add_action('after_setup_theme', 'varastudyvault_setup');
 
 
 /**
  * Load theme styles and navigation script.
  */
-function varastudy_vault_assets() {
+function varastudyvault_assets() {
     wp_enqueue_style(
-        'varastudy-vault-style',
+        'varastudyvault-style',
         get_stylesheet_uri(),
         array(),
         '1.0.0'
     );
 
     wp_enqueue_script(
-        'varastudy-vault-navigation',
+        'varastudyvault-navigation',
         get_template_directory_uri() . '/assets/js/navigation.js',
         array(),
         '1.0.0',
         true
     );
 }
-add_action('wp_enqueue_scripts', 'varastudy_vault_assets');
+add_action('wp_enqueue_scripts', 'varastudyvault_assets');
+
+
+/**
+ * Register Course Group / Semester URL variables.
+ */
+function varastudyvault_semester_query_vars($vars) {
+    $vars[] = 'varastudyvault_semester';
+    return $vars;
+}
+add_filter('query_vars', 'varastudyvault_semester_query_vars');
+
+
+/**
+ * Route URLs such as:
+ * /bcom-computer-applications/semester1/
+ */
+function varastudyvault_semester_rewrite_rules() {
+    add_rewrite_rule(
+        '^([^/]+)/semester([1-6])/?$',
+        'index.php?pagename=$matches[1]&varastudyvault_semester=$matches[2]',
+        'top'
+    );
+}
+add_action('init', 'varastudyvault_semester_rewrite_rules');
+
+
+/**
+ * Load the semester subject-listing template.
+ */
+function varastudyvault_semester_template($template) {
+    $semester = get_query_var('varastudyvault_semester');
+
+    if ($semester !== '') {
+        $semester_template = get_template_directory() . '/page-semester.php';
+
+        if (file_exists($semester_template)) {
+            return $semester_template;
+        }
+    }
+
+    return $template;
+}
+add_filter('template_include', 'varastudyvault_semester_template');
 
 
 /**
  * Fallback navigation.
  */
-function varastudy_vault_menu_fallback() {
+function varastudyvault_menu_fallback() {
     echo '<ul>';
     echo '<li><a href="' . esc_url(home_url('/')) . '">Home</a></li>';
 
@@ -87,7 +130,7 @@ function varastudy_vault_menu_fallback() {
 /**
  * Get the Subject ID linked to a resource through ACF.
  */
-function varastudy_vault_subject_id($id = 0) {
+function varastudyvault_subject_id($id = 0) {
     if (!function_exists('get_field')) {
         return 0;
     }
@@ -110,7 +153,8 @@ function varastudy_vault_subject_id($id = 0) {
 /**
  * Build breadcrumb items.
  */
-function varastudy_vault_breadcrumb_items() {
+function varastudyvault_breadcrumb_items() {
+
     $items = array(
         array(
             'label' => 'Home',
@@ -118,42 +162,45 @@ function varastudy_vault_breadcrumb_items() {
         ),
     );
 
-    if (is_post_type_archive('subjects') || is_singular('subjects')) {
+    /*
+     * Subjects archive.
+     */
+    if (is_post_type_archive('subjects')) {
+
         $items[] = array(
             'label' => 'Subjects',
-            'url'   => get_post_type_archive_link('subjects'),
+            'url'   => '',
         );
 
-        if (is_singular('subjects')) {
-            $semester = function_exists('get_field')
-                ? get_field('semester')
+    /*
+     * Individual Subject pages.
+     */
+    } elseif (is_singular('subjects')) {
+
+        $subject_id = get_queried_object_id();
+
+        $terms = wp_get_post_terms(
+            $subject_id,
+            'course_group'
+        );
+
+        if (!empty($terms) && !is_wp_error($terms)) {
+
+            $course = $terms[0];
+
+            $course_page = get_page_by_path(
+                $course->slug,
+                OBJECT,
+                'page'
+            );
+
+            $course_url = $course_page
+                ? get_permalink($course_page->ID)
                 : '';
 
-            if (is_scalar($semester) && (string) $semester !== '') {
-                $semester = (string) $semester;
-
-                $items[] = array(
-                    'label' => 'Semester ' . $semester,
-                    'url'   => add_query_arg(
-                        'semester',
-                        $semester,
-                        get_post_type_archive_link('subjects')
-                    ),
-                );
-            }
-
             $items[] = array(
-                'label' => get_the_title(),
-                'url'   => '',
-            );
-        }
-    } elseif (is_singular(array('study-materials', 'question-papers'))) {
-        $subject_id = varastudy_vault_subject_id();
-
-        if ($subject_id) {
-            $items[] = array(
-                'label' => 'Subjects',
-                'url'   => get_post_type_archive_link('subjects'),
+                'label' => $course->name,
+                'url'   => $course_url,
             );
 
             $semester = function_exists('get_field')
@@ -161,16 +208,105 @@ function varastudy_vault_breadcrumb_items() {
                 : '';
 
             if (is_scalar($semester) && (string) $semester !== '') {
+
                 $semester = (string) $semester;
 
                 $items[] = array(
                     'label' => 'Semester ' . $semester,
-                    'url'   => add_query_arg(
-                        'semester',
-                        $semester,
-                        get_post_type_archive_link('subjects')
+                    'url'   => home_url(
+                        '/' . $course->slug . '/semester' . $semester . '/'
                     ),
                 );
+            }
+        }
+
+        $items[] = array(
+            'label' => get_the_title($subject_id),
+            'url'   => '',
+        );
+
+    /*
+     * Semester pages.
+     */
+    } elseif (
+        is_page() &&
+        get_query_var('varastudyvault_semester') !== ''
+    ) {
+
+        $course_page_id = get_queried_object_id();
+
+        $course_slug = get_post_field(
+            'post_name',
+            $course_page_id
+        );
+
+        $course = get_term_by(
+            'slug',
+            $course_slug,
+            'course_group'
+        );
+
+        if ($course && !is_wp_error($course)) {
+
+            $items[] = array(
+                'label' => $course->name,
+                'url'   => get_permalink($course_page_id),
+            );
+
+            $items[] = array(
+                'label' => 'Semester ' . get_query_var('varastudyvault_semester'),
+                'url'   => '',
+            );
+        }
+
+    /*
+     * Individual Study Material and Question Paper pages.
+     */
+    } elseif (is_singular(array('study-materials', 'question-papers'))) {
+
+        $subject_id = varastudyvault_subject_id();
+
+        if ($subject_id) {
+
+            $terms = wp_get_post_terms(
+                $subject_id,
+                'course_group'
+            );
+
+            if (!empty($terms) && !is_wp_error($terms)) {
+
+                $course = $terms[0];
+
+                $course_page = get_page_by_path(
+                    $course->slug,
+                    OBJECT,
+                    'page'
+                );
+
+                $course_url = $course_page
+                    ? get_permalink($course_page->ID)
+                    : '';
+
+                $items[] = array(
+                    'label' => $course->name,
+                    'url'   => $course_url,
+                );
+
+                $semester = function_exists('get_field')
+                    ? get_field('semester', $subject_id)
+                    : '';
+
+                if (is_scalar($semester) && (string) $semester !== '') {
+
+                    $semester = (string) $semester;
+
+                    $items[] = array(
+                        'label' => 'Semester ' . $semester,
+                        'url'   => home_url(
+                            '/' . $course->slug . '/semester' . $semester . '/'
+                        ),
+                    );
+                }
             }
 
             $items[] = array(
@@ -179,36 +315,39 @@ function varastudy_vault_breadcrumb_items() {
             );
         }
 
-        $type = get_post_type();
-        $archive_url = get_post_type_archive_link($type);
-
-        $items[] = array(
-            'label' => $type === 'study-materials'
-                ? 'Study Materials'
-                : 'Question Papers',
-            'url'   => $subject_id
-                ? add_query_arg('subject', $subject_id, $archive_url)
-                : $archive_url,
-        );
-
         $items[] = array(
             'label' => get_the_title(),
             'url'   => '',
         );
+
+    /*
+     * Study Materials and Question Papers archives.
+     */
     } elseif (
         is_post_type_archive('study-materials') ||
         is_post_type_archive('question-papers')
     ) {
+
         $items[] = array(
             'label' => post_type_archive_title('', false),
             'url'   => '',
         );
+
+    /*
+     * Other pages and posts.
+     */
     } elseif (is_page() || is_single()) {
+
         $items[] = array(
             'label' => get_the_title(),
             'url'   => '',
         );
+
+    /*
+     * Search results.
+     */
     } elseif (is_search()) {
+
         $items[] = array(
             'label' => 'Search results',
             'url'   => '',
@@ -222,7 +361,7 @@ function varastudy_vault_breadcrumb_items() {
 /**
  * Get published Subject IDs matching Course Group and Semester.
  */
-function varastudy_vault_get_filtered_subject_ids($group_slug = '', $semester = '') {
+function varastudyvault_get_filtered_subject_ids($group_slug = '', $semester = '') {
     $args = array(
         'post_type'      => 'subjects',
         'post_status'    => 'publish',
@@ -263,7 +402,7 @@ function varastudy_vault_get_filtered_subject_ids($group_slug = '', $semester = 
 /**
  * Filter the Subjects archive by Course Group and Semester.
  */
-function varastudy_vault_subject_archive_filter($query) {
+function varastudyvault_subject_archive_filter($query) {
     if (
         is_admin() ||
         !$query->is_main_query() ||
@@ -315,7 +454,7 @@ function varastudy_vault_subject_archive_filter($query) {
         ));
     }
 }
-add_action('pre_get_posts', 'varastudy_vault_subject_archive_filter');
+add_action('pre_get_posts', 'varastudyvault_subject_archive_filter');
 
 
 /**
@@ -325,7 +464,7 @@ add_action('pre_get_posts', 'varastudy_vault_subject_archive_filter');
  * Academic Year is retained for both resource types
  * where the field is configured.
  */
-function varastudy_vault_resource_meta($id = 0) {
+function varastudyvault_resource_meta($id = 0) {
     if (!function_exists('get_field')) {
         return array();
     }
@@ -363,7 +502,7 @@ function varastudy_vault_resource_meta($id = 0) {
 /**
  * Get Course Group term IDs assigned to a Subject.
  */
-function varastudy_vault_subject_course_group_ids($subject_id) {
+function varastudyvault_subject_course_group_ids($subject_id) {
     $terms = get_the_terms(
         (int) $subject_id,
         'course_group'
@@ -396,7 +535,7 @@ function varastudy_vault_subject_course_group_ids($subject_id) {
  * Semester and Academic Year are matched against
  * the Question Paper's own ACF fields.
  */
-function varastudy_vault_resource_course_group_filter($query) {
+function varastudyvault_resource_course_group_filter($query) {
     if (
         is_admin() ||
         !$query->is_main_query()
@@ -483,7 +622,7 @@ function varastudy_vault_resource_course_group_filter($query) {
                 'compare' => '=',
             );
         } else {
-            $subject_ids = varastudy_vault_get_filtered_subject_ids(
+            $subject_ids = varastudyvault_get_filtered_subject_ids(
                 $group_slug,
                 $semester
             );
@@ -610,30 +749,21 @@ function varastudy_vault_resource_course_group_filter($query) {
      * Match the selected year against the ACF field
      * stored on each Question Paper.
      */
-    if ($is_question_papers && $academic_year !== '') {
-        /*
-         * Avoid accepting unexpected query values.
-         * Supports years such as 2026-27 and 2026–27.
-         */
-        if (
-            !preg_match(
-                '/^\d{4}\s*[-–—]\s*\d{2,4}$/u',
-                $academic_year
-            )
-        ) {
-            $query->set('post__in', array(0));
-            return;
-        }
-
-        $meta_query = (array) $query->get('meta_query');
-
-        $meta_query[] = array(
-            'key'     => 'academic_year',
-            'value'   => $academic_year,
-            'compare' => '=',
-        );
-
-        $query->set('meta_query', $meta_query);
+    if ( $is_question_papers && $academic_year !== '' ) {
+    if ( ! preg_match( '/^\d{4}$/', $academic_year ) ) {
+        $query->set( 'post__in', array( 0 ) );
+        return;
     }
+
+    $meta_query = (array) $query->get( 'meta_query' );
+
+    $meta_query[] = array(
+        'key'     => 'academic_year',
+        'value'   => $academic_year,
+        'compare' => '=',
+    );
+
+    $query->set( 'meta_query', $meta_query );
 }
-add_action('pre_get_posts', 'varastudy_vault_resource_course_group_filter');
+}
+add_action('pre_get_posts', 'varastudyvault_resource_course_group_filter');
