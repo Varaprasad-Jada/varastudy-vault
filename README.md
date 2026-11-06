@@ -1,15 +1,17 @@
-
 # VaraStudy Vault
 
-<p align="center">
-  <img src="/varastudy-vault-banner.jpg" alt="VaraStudy Vault — Open-source WordPress theme for college study resources" width="100%">
-</p>
+[![VaraStudy Vault — Open-source WordPress theme for college study resources](https://github.com/Varaprasad-Jada/varastudy-vault/raw/main/varastudy-vault-banner.jpg)](https://github.com/Varaprasad-Jada/varastudy-vault/blob/main/varastudy-vault-banner.jpg)
 
-<p align="center">
-  <strong>Study · Learn · Grow</strong>
-  <br>
-  An independent classic WordPress theme for organizing college study resources.
-</p>
+**Study · Learn · Grow**
+An independent classic WordPress theme for organizing college study resources.
+
+![License](https://img.shields.io/badge/License-GPL--2.0--or--later-blue)
+![WordPress](https://img.shields.io/badge/WordPress-6.0%2B-21759B?logo=wordpress&logoColor=white)
+![PHP](https://img.shields.io/badge/PHP-7.4%2B-777BB4?logo=php&logoColor=white)
+
+## Who is this for?
+
+College students, class representatives, and teachers who want one place to organize subjects, study materials, and question papers by course and semester.
 
 ---
 
@@ -19,13 +21,13 @@
 
 Explore semester-based navigation, study materials, and question papers in one place.
 
-![VaraStudy Vault homepage](screenshots/homepage.jpeg)
+[![VaraStudy Vault homepage](https://github.com/Varaprasad-Jada/varastudy-vault/raw/main/screenshots/homepage.jpeg)](https://github.com/Varaprasad-Jada/varastudy-vault/blob/main/screenshots/homepage.jpeg)
 
 ### Study Materials Archive
 
 Browse resources using course group, semester, and resource category filters.
 
-![VaraStudy Vault study materials archive](screenshots/study-materials.jpeg)
+[![VaraStudy Vault study materials archive](https://github.com/Varaprasad-Jada/varastudy-vault/raw/main/screenshots/study-materials.jpeg)](https://github.com/Varaprasad-Jada/varastudy-vault/blob/main/screenshots/study-materials.jpeg)
 
 ---
 
@@ -62,7 +64,7 @@ The `subject` relationship/post-object field must return a value format supporte
 2. Open **Appearance → Themes → Add New → Upload Theme** in WordPress.
 3. Upload the theme ZIP from the [Releases](https://github.com/Varaprasad-Jada/varastudy-vault/releases) page, or install the theme folder from this repository.
 4. Activate **VaraStudy Vault**.
-5. Keep the required custom post type and ACF configurations enabled.
+5. Create the three custom post types (`subjects`, `study-materials`, `question-papers`) and the ACF fields listed above.
 6. Open **Settings → Permalinks** and click **Save Changes** once.
 7. Assign your menus under **Appearance → Menus**, according to your WordPress setup.
 8. Create the About, Contact, and Privacy Policy pages if needed, and review the links in `footer.php`.
@@ -76,7 +78,7 @@ The `subject` relationship/post-object field must return a value format supporte
 - Theme name: VaraStudy Vault
 - Text domain: `varastudy-vault`
 
-The theme is used on the developer's own website. Compatibility has not been verified against every WordPress, CPT UI, or ACF configuration. Test archive filters, relationship fields, menus, and resource links before deploying to another production site.
+Compatibility has not been verified against every WordPress, CPT UI, or ACF configuration. Test archive filters, relationship fields, menus, and resource links before deploying to another production site.
 
 ## Images and Branding
 
@@ -84,20 +86,18 @@ The theme does not bundle stock photography or user-specific branding images. Si
 
 Users are responsible for ensuring they have permission to use the content they upload.
 
+## Contributing
+
+Found a bug or have an idea? Open an [issue](https://github.com/Varaprasad-Jada/varastudy-vault/issues). Pull requests are welcome.
+
 ## License
 
 VaraStudy Vault is distributed under the **GNU General Public License, version 2 or later (GPL-2.0-or-later)**.
 
-See the [`LICENSE`](LICENSE) file for the complete license text.
+See the [`LICENSE`](https://github.com/Varaprasad-Jada/varastudy-vault/blob/main/LICENSE) file for the complete license text.
 
 ---
 
-<p align="center">
-  <strong>VaraStudy Vault</strong>
-  <br>
-  An independent open-source WordPress theme.
-  <br>
-  <a href="https://github.com/Varaprasad-Jada/varastudy-vault">View repository</a>
-  ·
-  <a href="https://github.com/Varaprasad-Jada/varastudy-vault/releases">View releases</a>
-</p>
+**VaraStudy Vault**
+An independent open-source WordPress theme.
+[View repository](https://github.com/Varaprasad-Jada/varastudy-vault) · [View releases](https://github.com/Varaprasad-Jada/varastudy-vault/releases)
